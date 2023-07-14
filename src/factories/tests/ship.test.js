@@ -1,4 +1,4 @@
-const Ship = require('./ship');
+import Ship from '../ship';
 
 test('Ship object created', () => {
   expect(Ship()).toMatchObject({
@@ -8,19 +8,18 @@ test('Ship object created', () => {
 });
 
 test('hit function', () => {
-  const testship = Ship(1, 5);
+  const testship = Ship([[0,0], [1,0]]);
   expect(testship.hit()).toBe(1);
 });
 
 test('isSunk function', () => {
-  const testship = Ship(1, 1);
+  const testship = Ship([[0,0]]);
   testship.hit();
   expect(testship.isSunk()).toBe(true);
 });
 
 test('return size', () => {
-  const testship = Ship(1, 1);
-  testship.hit();
-  expect(testship.isSunk()).toBe(true);
+  const testship = Ship([[0,0], [1,0]]);
+  expect(testship.getSize()).toBe(2);
 });
 
