@@ -24,7 +24,7 @@ const Ship = (shape = [[0,0]]) => {
     return hits >= size;
   }
 
-  return {getShape, getSize, getHits, hit, isSunk};
+  return { getShape, getSize, getHits, hit, isSunk };
 }
 
 export default Ship;

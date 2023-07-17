@@ -1,5 +1,17 @@
-const Player = (name) => {
+const Player = (name, computer, board) => {
   let moves = [];
+
+  const getName = () => {
+    return name;
+  }
+
+  const isComputer = () => {
+    return computer;
+  }
+
+  const getBoard = () => {
+    return board;
+  }
 
   const addMove = (coord) => {
     if (!moves.includes(toString(coord))) {
@@ -10,6 +22,11 @@ const Player = (name) => {
     }
   }
 
+  const nextMove = () => {
+
+  }
+
+  // pick a random move
   const randomMove = (width, height) => {
 
     let randomCoord = `${Math.floor(Math.random() * width)},${Math.floor(Math.random() * height)}`;
@@ -28,9 +45,7 @@ const Player = (name) => {
     return coordStr.split(',');
   }
 
-  return {
-    addMove, randomMove
-  }
+  return { getName, isComputer, getBoard, nextMove, addMove, randomMove }
 }
 
 export default Player;

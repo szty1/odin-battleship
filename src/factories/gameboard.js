@@ -1,5 +1,3 @@
-import Ship from './ship.js';
-
 const Gameboard = (width, height) => {
 
   // create board 2d array and init slot states
@@ -26,11 +24,11 @@ const Gameboard = (width, height) => {
     }
   }
 
-  const placeShip = (ship, x, y) => {
+  const placeShip = (ship, coord) => {
 
     // create an array of ship requested coordinates
     let coordsArray = [];
-    ship.getShape().forEach(offset => coordsArray.push([x + offset[0], y + offset[1]]));
+    ship.getShape().forEach(offset => coordsArray.push([coord[0] + offset[0], coord[1] + offset[1]]));
   
     // check if all slots are available
     if (coordsArray.every(isSlotAvailable)) {
@@ -81,21 +79,7 @@ const Gameboard = (width, height) => {
     return ships.every((ship) => ship.isSunk());
   }
 
-  const printBoard = () => {
-
-    // prints the board to console (for testing purposes)
-    board.forEach(row => {
-      let rowdata = [];
-      row.forEach(slot => {
-        rowdata.push(slot.state);
-      });
-      console.log(rowdata.join(' | '));
-    })
-  }
-
-  return {
-    getBoard, placeShip, receiveAttack, areAllSunk, printBoard, isSlotAvailable
-  }
+  return { getBoard, placeShip, receiveAttack, areAllSunk, isSlotAvailable }
 }
 
 export default Gameboard;
