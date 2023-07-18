@@ -8,7 +8,9 @@ const GameControl = () => {
   // board size (standard is 10 by 10)
   const size = [10,10];
 
-  // ship sizes and shapes. supports irregular shaped ships, as we used to play it in school :)
+  // ship sizes and shapes. supports irregular shaped ships,
+  // as we used to play it in school :)
+  // TODO: allow players to choose custom shapes
   const ships = [
     [[0,0], [0,1], [0,2], [0,3], [0,4], [0,5]],
     [[0,0], [1,0], [2,0], [3,0]],
@@ -31,7 +33,7 @@ const GameControl = () => {
   const display = Display();
   
   const init = () => {
-
+    display.loadPage();
     players.forEach(player => {
 
       // place ships at random locations on the boards
@@ -44,7 +46,7 @@ const GameControl = () => {
       });
 
       console.log(player.getName());
-      display.printBoard(player.getBoard().getBoard());
+      display.loadBoard(player);
     })
   } 
 

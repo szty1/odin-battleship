@@ -1,3 +1,97 @@
+@font-face {
+  font-family: "SairaStencilOne";
+  src: url("../fonts/SairaStencilOne-Regular.ttf");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "RobotoSlab";
+  src: url("../fonts/RobotoSlab-Regular.ttf");
+  font-weight: 400;
+  font-style: normal;
+}
+
 body {
-  
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-size: 18px;
+  font-family: "Nunito";
+  font-weight: 600;
+  display: flex;
+}
+
+.content {
+  width: 100%;
+  display: grid;
+  grid-template-rows: 100px 1fr 40px;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(0, 48, 104);
+  padding: 0 30px 0 30px;
+}
+
+.header h2 {
+  color: #ffffff;
+  font-size: 48px;
+  font-family: "SairaStencilOne";
+  font-weight: 400;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(0, 48, 104);
+}
+
+.footer span {
+  font-size: 16px;
+  font-family: "RobotoSlab";
+  font-weight: 400;
+  color: #ffffff;
+}
+
+.main {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  flex-direction: column;
+  margin: 40px 0 0 0;
+}
+
+.boards {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  flex-direction: row;
+  gap: 50px;
+}
+
+.side {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.side h3 {
+  color: rgb(0, 48, 104);
+  font-size: 24px;
+  font-family: "SairaStencilOne";
+  font-weight: 400;
+}
+
+.board {
+  display: grid;
+    width: 20rem;
+    height: 20rem;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    border: 1px solid rgb(34, 34, 34);
 }
