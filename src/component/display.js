@@ -33,6 +33,7 @@ const Display = () => {
     const header = document.querySelector('.header');
     header.innerHTML = `
       <h2>BATTLESHIP</h2>
+      <h3>WITH A TWIST</h3>
     `;
   }
 
@@ -41,12 +42,12 @@ const Display = () => {
     main.innerHTML = `
       <div class="boards">
         <div class="side" id="player">
-          <h3>PLAYER</h3>
+          <h3>YOUR BOARD</h3>
           <div class="board player">
           </div>
         </div>
         <div class="side computer">
-          <h3>COMPUTER</h3>
+          <h3>ENEMY'S BOARD</h3>
           <div class="board computer">
           </div>
         </div>
@@ -66,15 +67,15 @@ const Display = () => {
     let grid = "";
     player.getBoard().getBoard().forEach((row, i) => {
       row.forEach((slot, j) => {
-        grid += `<div class="cell" data-id="${i},${j}"></div>`;
+        if (player.isComputer()) {
+          grid += `<a href="#" class="cellBtn" data-id="${i},${j}"></a>`;
+        } else {
+          grid += `<div class="cell ${slot.state}"></div>`;
+        }
       }); 
     });
     board.innerHTML = grid;
   }
-
-
-
-
 
   return { logBoard, loadPage, loadBoard }
   

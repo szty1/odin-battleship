@@ -1,7 +1,7 @@
 const Gameboard = (width, height) => {
 
   // create board 2d array and init slot states
-  let board = Array.from(Array(width), () => new Array(height).fill({state:'_', ship: null}));
+  let board = Array.from(Array(width), () => new Array(height).fill({state:'empty', ship: null}));
   let ships = [];
 
   const getBoard = () => board;
@@ -20,7 +20,7 @@ const Gameboard = (width, height) => {
     if (coord[0] < 0 || coord[1] < 0 || coord[0] >= width || coord[1] >= height) {
       return false;
     } else {
-      return (getSlotState(coord[0],coord[1]).state === "_");
+      return (getSlotState(coord[0],coord[1]).state === "empty");
     }
   }
 
@@ -35,7 +35,7 @@ const Gameboard = (width, height) => {
 
       // mark ship slots
       coordsArray.forEach((coord) => {
-        setSlotState(coord[0], coord[1], 'O', ship);
+        setSlotState(coord[0], coord[1], 'ship', ship);
       });
 
       // mark neighboring slots as unavaiable for next ships
@@ -43,7 +43,7 @@ const Gameboard = (width, height) => {
         for (let i = -1; i <= 1; i++) {
           for (let j = -1; j <= 1; j++) {
             if (isSlotAvailable([coord[0] + i, coord[1] + j])) {
-              setSlotState(coord[0] + i, coord[1] + j, '.', null);
+              setSlotState(coord[0] + i, coord[1] + j, 'na', null);
             }
           }
         } 
@@ -61,14 +61,14 @@ const Gameboard = (width, height) => {
     const state = getSlotState(x, y);
 
     // if its a ship, call hit function of ship and set slot state to hit
-    if (state.state === 'O') {
+    if (state.state === 'ship') {
       state.ship.hit();
-      setSlotState(x, y, 'X', state.ship);
+      setSlotState(x, y, 'hit', state.ship);
     }
 
     // set slot state to miss
     else {
-      setSlotState(x, y, '+');
+      setSlotState(x, y, 'miss');
     } 
 
     // return new state of slot
