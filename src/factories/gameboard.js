@@ -1,26 +1,26 @@
-const Gameboard = (width, height) => {
+const Gameboard = (boardSize) => {
 
   // create board 2d array and init slot states
-  let board = Array.from(Array(width), () => new Array(height).fill({state:'empty', ship: null}));
+  let board = Array.from(Array(boardSize[0]), () => new Array(boardSize[1]).fill({state:'empty', ship: null}));
   let ships = [];
 
   const getBoard = () => board;
 
-  const setSlotState = (x, y, state, ship = null) => {
-    board[x][y] = {state:state, ship:ship};
+  const setSlotState = (coord, state, ship = null) => {
+    board[coord[0]][coord[1]] = {state:state, ship:ship};
   }
 
-  const getSlotState = (x, y) => {
-    return board[x][y];
+  const getSlotState = (coord) => {
+    return board[coord[0]][coord[1]];
   }
 
   const isSlotAvailable = (coord) =>
   {
     // check if coordinates are valid and return state if true
-    if (coord[0] < 0 || coord[1] < 0 || coord[0] >= width || coord[1] >= height) {
+    if (coord[0] < 0 || coord[1] < 0 || coord[0] >= boardSize[0] || coord[1] >= boardSize[1]) {
       return false;
     } else {
-      return (getSlotState(coord[0],coord[1]).state === "empty");
+      return (getSlotState(coord).state === "empty");
     }
   }
 
@@ -35,7 +35,8 @@ const Gameboard = (width, height) => {
 
       // mark ship slots
       coordsArray.forEach((coord) => {
-        setSlotState(coord[0], coord[1], 'ship', ship);
+        ship.addCoord(coord);
+        setSlotState(coord, 'ship', ship);
       });
 
       // mark neighboring slots as unavaiable for next ships
@@ -43,7 +44,7 @@ const Gameboard = (width, height) => {
         for (let i = -1; i <= 1; i++) {
           for (let j = -1; j <= 1; j++) {
             if (isSlotAvailable([coord[0] + i, coord[1] + j])) {
-              setSlotState(coord[0] + i, coord[1] + j, 'na', null);
+              setSlotState([coord[0] + i, coord[1] + j], 'na', null);
             }
           }
         } 
@@ -55,25 +56,36 @@ const Gameboard = (width, height) => {
     return false;
   }
 
-  const receiveAttack = (x, y) => {
+  const receiveAttack = (coord) => {
 
     // get state of selected slot
-    const state = getSlotState(x, y);
+    const state = getSlotState(coord);
 
     // if its a ship, call hit function of ship and set slot state to hit
     if (state.state === 'ship') {
       state.ship.hit();
-      setSlotState(x, y, 'hit', state.ship);
+      if (state.ship.isSunk()) {
+        setShipSunk(state.ship);
+      }
+      else {
+        setSlotState(coord, 'hit', state.ship);
+      } 
     }
 
     // set slot state to miss
     else {
-      setSlotState(x, y, 'miss');
+      setSlotState(coord, 'miss');
     } 
 
     // return new state of slot
-    return getSlotState(x, y);
+    return getSlotState(coord);
   }
+
+  const setShipSunk = (ship) => {
+    ship.getCoords().forEach(coord => {
+      setSlotState(coord, 'sunk', ship);
+    });
+  } 
 
   const areAllSunk = () => {
     return ships.every((ship) => ship.isSunk());

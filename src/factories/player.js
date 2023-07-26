@@ -22,18 +22,18 @@ const Player = (name, computer, board) => {
     }
   }
 
-  const nextMove = () => {
-
-  }
-
   // pick a random move
-  const randomMove = (width, height) => {
+  const randomMove = (size) => {
 
-    let randomCoord = `${Math.floor(Math.random() * width)},${Math.floor(Math.random() * height)}`;
+    let randomCoord = `${Math.floor(Math.random() * size[0])},${Math.floor(Math.random() * size[1])}`;
     while (moves.includes(randomCoord)) {
-      randomCoord = `${Math.floor(Math.random() * width)},${Math.floor(Math.random() * height)}`;
+      randomCoord = `${Math.floor(Math.random() * size[0])},${Math.floor(Math.random() * size[[1]])}`;
     }
     return toCoords(randomCoord);
+  }
+
+  const smartMove = (size) => {
+    
   }
 
   // helper functions to store coords as strings
@@ -45,7 +45,7 @@ const Player = (name, computer, board) => {
     return coordStr.split(',');
   }
 
-  return { getName, isComputer, getBoard, nextMove, addMove, randomMove }
+  return { getName, isComputer, getBoard, addMove, randomMove }
 }
 
 export default Player;

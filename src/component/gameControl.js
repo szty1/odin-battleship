@@ -12,14 +12,15 @@ const GameControl = () => {
   // ship sizes and shapes. supports irregular shaped ships,
   // as we used to play it in school :)
   // TODO: allow players to choose custom shapes
-  const shipSizes = [5,4,3,3,2,2,1,1];
+  const shipSizes = [5,4,3,2,1];
+  // const shipSizes = [5];
 
   // create the players. human player will start the game
-  const player  = Player('player', false, Gameboard(boardSize[0], boardSize[1]));
-  const computer = Player('computer', true, Gameboard(boardSize[0], boardSize[1]));  
+  const player  = Player('player', false, Gameboard(boardSize));
+  const computer = Player('computer', true, Gameboard(boardSize));  
 
   const players = [player, computer];
-  let currentplayer = 0;
+  let current = computer;
 
    // init display 
   const display = Display();
@@ -27,7 +28,7 @@ const GameControl = () => {
   const init = () => {
 
     // load html skeleton
-    display.loadPage();
+    display.loadPage(boardSize);
 
     players.forEach(player => {
       shipSizes.forEach(size => {
@@ -36,16 +37,76 @@ const GameControl = () => {
         const shipOffset = randomShipShape(size);
 
         // place ship at random location on the board
-        let rndCoords = randomCoords(boardSize[0], boardSize[1]);
+        let rndCoords = randomCoords(boardSize);
         let ship = Ship(shipOffset);
         while(player.getBoard().placeShip(ship, rndCoords) === false) {
-          rndCoords = randomCoords(boardSize[0], boardSize[1]);
+          rndCoords = randomCoords(boardSize);
         }
       });
 
-      display.loadBoard(player);
+      display.renderBoard(player);
     })
-  } 
+
+    playRound();
+  }
+
+  // update the current player's board and init computer's move
+  const playRound = () => {
+    toggleEventListeners();
+    display.highlight(current);
+    display.renderBoard(current);
+
+    if (checkWinner()) return;
+
+    if (current.isComputer()) {
+      setTimeout(playComputerMove, 500);
+    }
+  }
+
+  // record the computer's move and chech if game is over
+  const playComputerMove = () => {
+    const randomMove = current.randomMove(boardSize);
+    current.addMove(randomMove);
+    getOtherPlayer().getBoard().receiveAttack(randomMove);
+    current = getOtherPlayer();
+    playRound();
+  }
+
+  // record the player's move and chech if game is over
+  const handlePlayerMove = (coord) => {
+    if (current === player && player.addMove(coord)) {
+      const state = getOtherPlayer().getBoard().receiveAttack(coord);
+      switch(state.state) {
+        case 'miss':
+          display.showMsg("NOTHING THERE");
+          break;
+        case 'hit':
+          display.showMsg("THAT'S A HIT");
+          break;
+        case 'sunk':
+          display.showMsg("THAT'S SHIP HAS SUNK");
+          break;
+      }
+      current = getOtherPlayer();
+      playRound();
+    }
+  }
+
+  // check is current player sunk all ships
+  const checkWinner = () => {
+    if (current.getBoard().areAllSunk()) {
+      display.showWinner(getOtherPlayer());
+      return true;
+    }
+    return false;
+  }
+
+  // HELPER FUNCTIONS
+
+  const getOtherPlayer = () => {
+    if (current === player) return computer;
+    else return player;
+  }
 
   // returns a random shape with the specified size from the shipTypes array
   const randomShipShape = (size) => {
@@ -55,17 +116,31 @@ const GameControl = () => {
   }
 
   // returns a random 2d coordinate
-  const randomCoords = (width, height) => {
-    const x = Math.floor(Math.random() * width);
-    const y = Math.floor(Math.random() * height);
+  const randomCoords = (size) => {
+    const x = Math.floor(Math.random() * size[0]);
+    const y = Math.floor(Math.random() * size[1]);
     return [x,y];
   }
 
-  const playMove = () => {
+  // USER INPUT
 
+  // toggle event listeners when player is in/active
+  const toggleEventListeners = () => {
+    if (current.isComputer()) {
+      document.querySelector('.board.computer').removeEventListener('click', handleClick);
+    } else {
+      document.querySelector('.board.computer').addEventListener('click', handleClick);
+    }
   }
 
-  return { init }
+  // handle player input
+  const handleClick = (e) => {
+    if (e.target.dataset.id != undefined) {
+      handlePlayerMove(e.target.dataset.id.split(','));
+    }
+  }
+
+  return { init, playRound }
 
 }
 
