@@ -64,6 +64,9 @@ const Display = () => {
       <div class="message">
         <h2></h2>
       </div>
+      <div class="newgame hide">
+        <input type="button" value="Start a New Game">
+      </div>
       `;
   }
 
@@ -74,12 +77,12 @@ const Display = () => {
     `;
   }
 
-  const renderBoard = (player) => {
+  const renderBoard = (player, gameEnded = false) => {
     const board = document.querySelector(`.board.${player.getName()}`);
     let grid = "";
     player.getBoard().getBoard().forEach((row, i) => {
       row.forEach((slot, j) => {
-        if (player.isComputer()) {
+        if (player.isComputer() && !gameEnded) {
           if (slot.state === 'miss' || slot.state === 'hit' || slot.state === 'sunk') {
             grid += `<div class="cell ${slot.state}"></div>`;
           } else {
@@ -97,6 +100,7 @@ const Display = () => {
     if (currentplayer.isComputer()) {
       document.querySelector('#player').classList.add('highlighted');
       document.querySelector('#computer').classList.remove('highlighted');
+      showMsg("", ".instructions");
     } else {
       document.querySelector('#player').classList.remove('highlighted');
       document.querySelector('#computer').classList.add('highlighted');
@@ -120,8 +124,12 @@ const Display = () => {
       showMsg("BETTER LUCK NEXT TIME!");
     }
   }
+
+  const showNewGameBtn = () => {
+    document.querySelector('.newgame').classList.remove("hide");
+  }
   
-  return { logBoard, loadPage, renderBoard, highlight, showWinner, showMsg }
+  return { logBoard, loadPage, renderBoard, highlight, showWinner, showMsg, showNewGameBtn }
   
 }
 

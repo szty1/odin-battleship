@@ -85,7 +85,7 @@ const Gameboard = (boardSize) => {
     ship.getCoords().forEach(coord => {
       setSlotState(coord, 'sunk', ship);
     });
-  } 
+  }
 
   const areAllSunk = () => {
     return ships.every((ship) => ship.isSunk());

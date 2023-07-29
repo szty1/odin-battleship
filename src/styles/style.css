@@ -214,3 +214,17 @@ body {
   text-decoration: none;
   margin: 0;
 }
+
+.newgame input {
+  padding: 20px;
+  font-size: 20px;
+  font-family: "RobotoSlab";
+  background-color: rgb(0, 48, 104);
+  color: #ffffff;
+  border: none;
+  margin-top: 20px;
+}
+
+.hide {
+  display: none;
+}

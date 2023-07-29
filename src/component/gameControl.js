@@ -12,14 +12,12 @@ const GameControl = () => {
   // ship sizes and shapes. supports irregular shaped ships,
   // as we used to play it in school :)
   // TODO: allow players to choose custom shapes
-  const shipSizes = [5,4,3,2,1];
-  // const shipSizes = [5];
+  // const shipSizes = [5,4,3,3,2,2,1,1];
+  const shipSizes = [5];
 
   // create the players. human player will start the game
-  const player  = Player('player', false, Gameboard(boardSize));
-  const computer = Player('computer', true, Gameboard(boardSize));  
-
-  const players = [player, computer];
+  let player = Player('player', false, Gameboard(boardSize));
+  let computer = Player('computer', true, Gameboard(boardSize));  
   let current = computer;
 
    // init display 
@@ -30,7 +28,7 @@ const GameControl = () => {
     // load html skeleton
     display.loadPage(boardSize);
 
-    players.forEach(player => {
+    [player, computer].forEach(player => {
       shipSizes.forEach(size => {
 
         // select a random ship shape with the specified size
@@ -65,9 +63,18 @@ const GameControl = () => {
 
   // record the computer's move and chech if game is over
   const playComputerMove = () => {
-    const randomMove = current.randomMove(boardSize);
-    current.addMove(randomMove);
-    getOtherPlayer().getBoard().receiveAttack(randomMove);
+    const move = current.smartMove(boardSize);
+    current.addMove(move);
+    const state = getOtherPlayer().getBoard().receiveAttack(move);
+    switch(state.state) {
+      case 'hit':
+        current.setLastHit(move);
+        break;
+      case 'sunk':
+        current.setLastHit(move);
+        current.markSunkNeighbors(state.ship, boardSize);
+        break;
+    }
     current = getOtherPlayer();
     playRound();
   }
@@ -84,7 +91,7 @@ const GameControl = () => {
           display.showMsg("THAT'S A HIT");
           break;
         case 'sunk':
-          display.showMsg("THAT'S SHIP HAS SUNK");
+          display.showMsg("THAT SHIP HAS SUNK");
           break;
       }
       current = getOtherPlayer();
@@ -95,7 +102,10 @@ const GameControl = () => {
   // check is current player sunk all ships
   const checkWinner = () => {
     if (current.getBoard().areAllSunk()) {
+      display.renderBoard(computer, true);
       display.showWinner(getOtherPlayer());
+      display.showNewGameBtn();
+      gameOverEventListeners();
       return true;
     }
     return false;
@@ -127,17 +137,31 @@ const GameControl = () => {
   // toggle event listeners when player is in/active
   const toggleEventListeners = () => {
     if (current.isComputer()) {
-      document.querySelector('.board.computer').removeEventListener('click', handleClick);
+      document.querySelector('.board.computer').removeEventListener('click', handleTileClick);
     } else {
-      document.querySelector('.board.computer').addEventListener('click', handleClick);
+      document.querySelector('.board.computer').addEventListener('click', handleTileClick);
     }
   }
 
+  // remove event listeners
+  const gameOverEventListeners = () => {
+    document.querySelector('.board.computer').removeEventListener('click', handleTileClick);
+    document.querySelector('.newgame input').addEventListener('click', handleNewGameBtnClick);
+
+  }
+
   // handle player input
-  const handleClick = (e) => {
+  const handleTileClick = (e) => {
     if (e.target.dataset.id != undefined) {
       handlePlayerMove(e.target.dataset.id.split(','));
     }
+  }
+
+  const handleNewGameBtnClick = (e) => {
+    player = Player('player', false, Gameboard(boardSize));
+    computer = Player('computer', true, Gameboard(boardSize));  
+    current = computer;
+    init();
   }
 
   return { init, playRound }
