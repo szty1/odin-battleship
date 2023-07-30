@@ -12,8 +12,8 @@ const GameControl = () => {
   // ship sizes and shapes. supports irregular shaped ships,
   // as we used to play it in school :)
   // TODO: allow players to choose custom shapes
-  // const shipSizes = [5,4,3,3,2,2,1,1];
-  const shipSizes = [5];
+  const shipSizes = [5,4,3,3,2,2,1,1];
+  // const shipSizes = [5];
 
   // create the players. human player will start the game
   let player = Player('player', false, Gameboard(boardSize));

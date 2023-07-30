@@ -51,11 +51,13 @@ const Display = () => {
           <h3>YOUR BOARD</h3>
           <div class="board player">
           </div>
+          <div class="ships player"></div>
         </div>
         <div class="side" id="computer">
           <h3>ENEMY'S BOARD</h3>
           <div class="board computer">
           </div>
+          <div class="ships computer"></div>
         </div>
       </div>
       <div class="instructions">
@@ -94,6 +96,13 @@ const Display = () => {
       }); 
     });
     board.innerHTML = grid;
+
+    const shipsContainer = document.querySelector(`.ships.${player.getName()}`);
+    let ships = "";
+    player.getBoard().getShips().forEach(ship => {
+      ships += `<div class="smallship ${ship.isSunk() ? 'sunk' : ''}">${ship.getSize()}</div>`;
+    })
+    shipsContainer.innerHTML = ships;
   }
 
   const highlight = (currentplayer) => {

@@ -14,6 +14,10 @@ const Gameboard = (boardSize) => {
     return board[coord[0]][coord[1]];
   }
 
+  const getShips = () => {
+    return ships;
+  }
+
   const isSlotAvailable = (coord) =>
   {
     // check if coordinates are valid and return state if true
@@ -91,7 +95,7 @@ const Gameboard = (boardSize) => {
     return ships.every((ship) => ship.isSunk());
   }
 
-  return { getBoard, placeShip, receiveAttack, areAllSunk, isSlotAvailable }
+  return { getBoard, placeShip, getShips, receiveAttack, areAllSunk, isSlotAvailable }
 }
 
 export default Gameboard;
