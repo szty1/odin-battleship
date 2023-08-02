@@ -105,6 +105,26 @@ const Display = () => {
     shipsContainer.innerHTML = ships;
   }
 
+  const renderShipPlacementBoard = (player) => {
+    showMsg("PLACE YOUR SHIP!", ".instructions");
+    showMsg("RIGHT CLICK TO CHANGE SHAPE");
+    const board = document.querySelector(`.board.player`);
+    let grid = "";
+    player.getBoard().getBoard().forEach((row, i) => {
+      row.forEach((slot, j) => {
+        grid += `<a href="#" class="cellBtn  ${slot.state}" data-id="${i},${j}"></a>`;
+      }); 
+    });
+    board.innerHTML = grid;
+
+    const shipsContainer = document.querySelector(`.ships.player`);
+    let ships = "";
+    player.getBoard().getShips().forEach(ship => {
+      ships += `<div class="smallship ${ship.isSunk() ? 'sunk' : ''}">${ship.getSize()}</div>`;
+    })
+    shipsContainer.innerHTML = ships;
+  }
+
   const highlight = (currentplayer) => {
     if (currentplayer.isComputer()) {
       document.querySelector('#player').classList.add('highlighted');
@@ -138,7 +158,7 @@ const Display = () => {
     document.querySelector('.newgame').classList.remove("hide");
   }
   
-  return { logBoard, loadPage, renderBoard, highlight, showWinner, showMsg, showNewGameBtn }
+  return { logBoard, loadPage, renderBoard, renderShipPlacementBoard, highlight, showWinner, showMsg, showNewGameBtn }
   
 }
 

@@ -13,7 +13,7 @@ const GameControl = () => {
   // as we used to play it in school :)
   // TODO: allow players to choose custom shapes
   const shipSizes = [5,4,3,3,2,2,1,1];
-  // const shipSizes = [5];
+  let shipIndex = 0;
 
   // create the players. human player will start the game
   let player = Player('player', false, Gameboard(boardSize));
@@ -27,25 +27,45 @@ const GameControl = () => {
 
     // load html skeleton
     display.loadPage(boardSize);
+    display.renderShipPlacementBoard(player);
+    addShipPlacementListeners();
+  }
 
-    [player, computer].forEach(player => {
-      shipSizes.forEach(size => {
+  const placePlayerShip = (coord) => {
+    coord[0] = parseInt(coord[0]);
+    coord[1] = parseInt(coord[1]);
 
-        // select a random ship shape with the specified size
-        const shipOffset = randomShipShape(size);
+    const shipOffset = randomShipShape(shipSizes[shipIndex]);
+    let ship = Ship(shipOffset);
+    if (player.getBoard().placeShip(ship, coord) === false) {
+      return false;
+    }
+    else {
+      display.renderShipPlacementBoard(player);
+      if (shipIndex < shipSizes.length -1) {
+        shipIndex++;
+      }
+      else {
+        display.renderBoard(player);
+        placeComputerShips();
+        playRound();
+      }
+    }
+  }
 
-        // place ship at random location on the board
-        let rndCoords = randomCoords(boardSize);
-        let ship = Ship(shipOffset);
-        while(player.getBoard().placeShip(ship, rndCoords) === false) {
-          rndCoords = randomCoords(boardSize);
-        }
-      });
+  const placeComputerShips = () => {
+    shipSizes.forEach(size => {
 
-      display.renderBoard(player);
-    })
+      // select a random ship shape with the specified size
+      const shipOffset = randomShipShape(size);
 
-    playRound();
+      // place ship at random location on the board
+      let rndCoords = randomCoords(boardSize);
+      let ship = Ship(shipOffset);
+      while(computer.getBoard().placeShip(ship, rndCoords) === false) {
+        rndCoords = randomCoords(boardSize);
+      }
+    });
   }
 
   // update the current player's board and init computer's move
@@ -143,6 +163,11 @@ const GameControl = () => {
     }
   }
 
+  // add event listeners when player is placing ship
+  const addShipPlacementListeners = () => {
+    document.querySelector('.board.player').addEventListener('click', handlePlacementTileClick);
+  }
+
   // remove event listeners
   const gameOverEventListeners = () => {
     document.querySelector('.board.computer').removeEventListener('click', handleTileClick);
@@ -161,7 +186,14 @@ const GameControl = () => {
     player = Player('player', false, Gameboard(boardSize));
     computer = Player('computer', true, Gameboard(boardSize));  
     current = computer;
+    shipIndex = 0;
     init();
+  }
+
+  const handlePlacementTileClick = (e) => { 
+    if (e.target.dataset.id != undefined) {
+      placePlayerShip(e.target.dataset.id.split(','));
+    }
   }
 
   return { init, playRound }

@@ -115,6 +115,7 @@ body {
   font-family: "SairaStencilOne";
   font-weight: 400;
   text-decoration: none;
+  margin: 10px 0 15px 0;
 }
 
 .side.highlighted h3 {
@@ -181,6 +182,10 @@ body {
   border: 1px solid #999999;
   margin: 1px;
   display: flex;
+}
+
+.cellBtn.ship {
+  background-color: rgba(0, 49, 104, 0.3);
 }
 
 .cellBtn:hover {
