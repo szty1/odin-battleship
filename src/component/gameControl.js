@@ -14,6 +14,7 @@ const GameControl = () => {
   // TODO: allow players to choose custom shapes
   const shipSizes = [5,4,3,3,2,2,1,1];
   let shipIndex = 0;
+  let shipShape = 0;
 
   // create the players. human player will start the game
   let player = Player('player', false, Gameboard(boardSize));
@@ -35,7 +36,7 @@ const GameControl = () => {
     coord[0] = parseInt(coord[0]);
     coord[1] = parseInt(coord[1]);
 
-    const shipOffset = randomShipShape(shipSizes[shipIndex]);
+    const shipOffset = getShipShape(shipSizes[shipIndex], shipShape);
     let ship = Ship(shipOffset);
     if (player.getBoard().placeShip(ship, coord) === false) {
       return false;
@@ -44,8 +45,10 @@ const GameControl = () => {
       display.renderShipPlacementBoard(player);
       if (shipIndex < shipSizes.length -1) {
         shipIndex++;
+        shipShape = 0;
       }
       else {
+        removeShipPlacementListeners();
         display.renderBoard(player);
         placeComputerShips();
         playRound();
@@ -66,6 +69,14 @@ const GameControl = () => {
         rndCoords = randomCoords(boardSize);
       }
     });
+  }
+
+  const changeShipShape = () => {
+    shipShape++;
+    const shipType = shipTypes.find(element => element.size === shipSizes(shipIndex));
+    if (shipShape >= shipType.length) {
+      shipShape = 0;
+    }
   }
 
   // update the current player's board and init computer's move
@@ -145,6 +156,12 @@ const GameControl = () => {
     return shipType.shapes[randomIndex];
   }
 
+  // returns shape with the specified index from the shipTypes array
+  const getShipShape = (size, index = 0) => {
+    const shipType = shipTypes.find(element => element.size === size);
+    return shipType.shapes[index];
+  }
+
   // returns a random 2d coordinate
   const randomCoords = (size) => {
     const x = Math.floor(Math.random() * size[0]);
@@ -166,6 +183,15 @@ const GameControl = () => {
   // add event listeners when player is placing ship
   const addShipPlacementListeners = () => {
     document.querySelector('.board.player').addEventListener('click', handlePlacementTileClick);
+    document.querySelector('.board.player').addEventListener('contextmenu', handleRightClick);
+
+  }
+
+  // add event listeners when player is placing ship
+  const removeShipPlacementListeners = () => {
+    document.querySelector('.board.player').removeEventListener('click', handlePlacementTileClick);
+    document.querySelector('.board.player').removeEventListener('contextmenu', handleRightClick);
+
   }
 
   // remove event listeners
@@ -193,6 +219,14 @@ const GameControl = () => {
   const handlePlacementTileClick = (e) => { 
     if (e.target.dataset.id != undefined) {
       placePlayerShip(e.target.dataset.id.split(','));
+    }
+  }
+
+  const handleRightClick = (e) => { 
+    if (e.target.dataset.id != undefined) {
+      e.preventDefault();
+      changeShipShape();
+      return false;
     }
   }
 
